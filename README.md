@@ -30,22 +30,19 @@ The project was implemented using:
 
 ## Project Set-Up Process
 
-1.Install all the required libraries into your R environment. 
-*Since we are working with dplyr, plotly, shiny, ggplot2, scales and tidyr, you need to install them.
-2.Get to the folder structure next. Make sure that you have a folder with all dedicated files in it. 
-*In our case those were 18 datasets madrid2001.csv till madrid2018.csv and the stations.csv file
-3.Bind 18 individual tables on top of each other vertically and save them in one dataframe.
-*Make sure data types correspond to data objects, namely their gist and purpose in the dataset, 
-remove any spaces and normalise columns to the common standard.
-4.Join on the data, in our case, we used a left_join on the 'station' key
+1.Install all the dplyr, plotly, shiny, ggplot2, scales and tidyr libraries into your R environment. 
+2.Make sure that you have a folder with all 18 madrid2001 till mardid2018 datasets and the stations.csv file in it. 
+3.Make sure data types correspond to data objects, namely their gist and purpose in the dataset, 
+4.Remove trailing spaces and normalise columns to the common standard.
+4.Left_join on the 'station' key to combine datasets.
 5.Build an interactive dashboard using Shiny.
-*Build a vector mapping limits to pollutants
-*Define the database constrains (e.g. converting units into the universal ones, etc)
-*Create a selection bar for pollutants, a slider bar to filter years and a checkbox to choose thresholds.
-*Create 4 distinct visual summary cards
-6.Build interactives 'filtered' and 'yearly' to react to users' clicks
-*Calculate percentage changes relatively to 2001 baseline, using geom_tile in ggplot2
-*Convert static graphs to interactives getting from ggplot to ggplotly
+5.1.Build a vector mapping limits to pollutants
+5.2.Define the database constrains (e.g. converting units into the universal ones, etc)
+5.3.Create a selection bar for pollutants, a slider bar to filter years and a checkbox to choose thresholds.
+5.4.Create 4 distinct visual summary cards
+6.Build 'filtered' and 'yearly' interacticves to react to users' clicks
+6.1.Calculate percentage changes relative to 2001 baseline, using geom_tile in ggplot2
+6.2.Convert static graphs to interactives getting from ggplot to ggplotly
 7.Tie everything together with the shinyApp
 
 ## Dataset
