@@ -28,6 +28,22 @@ The project was implemented using:
 - Visualisation design and implementation
 - Interactive Shiny dashboard
 
+## Project Set-Up Process
+
+-Install all the required libraries into your R environment. Since we are working with dplyr, plotly, shiny, ggplot2, scales and tidyr, you need to install them.
+-Get to the folder structure next. Make sure that you have a folder with all dedicated files in it. In our case those were 18 datasets madrid2001.csv till madrid2018.csv and the stations.csv file
+-Bind 18 individual tables on top of each other vertically and save them in one dataframe.
+*Make sure data types correspond to data objects, namely their gist and purpose in the dataset, remove any spaces and normalise columns to the common standard.
+*Join on the data, in our case, we used a left_join on the 'station' key
+-Build an interactive dashboard using Shiny.
+*Build a vector mapping limits to pollutants
+*Define the database constrains (e.g. converting units into the universal ones, etc)
+*Create a selection bar for pollutants, a slider bar to filter years and a checkbox to choose thresholds.
+*Create 4 distinct visual summary cards
+-Build interactives 'filtered' and 'yearly' to react to users' clicks
+-Calculate percentage changes relatively to 2001 baseline, using geom_tile in ggplot2
+-Convert static graphs to interactives getting from ggplot to ggplotly
+-Tie everything together with the shinyApp
 
 ## Dataset
 
