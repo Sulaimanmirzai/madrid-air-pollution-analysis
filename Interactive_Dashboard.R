@@ -1,5 +1,5 @@
 # ============================================================
-# Madrid Air Quality - Interactive Shiny Dashboard for Project
+# Madrid Air Quality - Interactive Shiny Dashboard
 # Run AFTER data loading & merging code
 # Launch with: shiny::runApp("madrid_shiny.R")
 # ============================================================
@@ -9,7 +9,7 @@ library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(scales)
-library(plotly)   # converts ggplot to interactive with ggplotly()
+library(plotly)   
 
 # ── CONSTANTS ────────────────────────────────────────────────
 EU_LIMITS <- c(NO_2 = 40, PM10 = 40, O_3 = 120, SO_2 = 125)
@@ -153,8 +153,9 @@ server <- function(input, output, session) {
   
   # ── KPI boxes ──
   output$kpi_avg <- renderText({
-    val <- mean(filtered()[[input$pollutant]], na.rm = TRUE)
-    paste0(round(val, 1), " µg/m³")
+    val  <- mean(filtered()[[input$pollutant]], na.rm = TRUE)
+    unit <- ifelse(input$pollutant == "CO", "mg/m³", "µg/m³")
+    paste0(round(val, 1), " ", unit)
   })
   
   output$kpi_peak <- renderText({
@@ -182,9 +183,11 @@ server <- function(input, output, session) {
     poll <- input$pollutant
     eu   <- EU_LIMITS[poll]
     
-    p <- ggplot(d, aes(x = year, y = avg,
+    unit <- ifelse(poll == "CO", "mg/m³", "µg/m³")
+    
+    p <- ggplot(d, aes(x = year, y = avg, group = 1,
                        text = paste0("Year: ", year,
-                                     "<br>Avg: ", round(avg, 1), " µg/m³"))) +
+                                     "<br>Avg: ", round(avg, 1), " ", unit))) +
       geom_line(colour = "steelblue", linewidth = 1) +
       geom_point(colour = "steelblue", size = 2.5) +
       scale_x_continuous(breaks = seq(input$year_range[1],
@@ -199,8 +202,8 @@ server <- function(input, output, session) {
       p <- p +
         geom_hline(yintercept = eu,
                    linetype = "dashed", colour = "#d73027", linewidth = 0.8) +
-        annotate("text", x = input$year_range[1], y = eu + 1,
-                 label = paste0("EU limit (", eu, " µg/m³)"),
+        annotate("text", x = min(d$year), y = eu + (max(d$avg, na.rm = TRUE) * 0.03),
+                 label = paste0("EU limit (", eu, " ", unit, ")"),
                  colour = "#d73027", hjust = 0, size = 3.5)
     }
     
@@ -212,6 +215,7 @@ server <- function(input, output, session) {
   output$plot_ranking <- renderPlotly({
     poll <- input$pollutant
     eu   <- EU_LIMITS[poll]
+    unit <- ifelse(poll == "CO", "mg/m³", "µg/m³")
     
     d <- madrid_all %>%
       filter(year == as.integer(input$rank_year)) %>%
@@ -232,10 +236,10 @@ server <- function(input, output, session) {
     
     p <- ggplot(d, aes(x = name, y = avg, fill = avg,
                        text = paste0(name, "<br>Avg: ",
-                                     round(avg, 1), " µg/m³"))) +
+                                     round(avg, 1), " ", unit))) +
       geom_col() +
       scale_fill_gradient(low = "#fee08b", high = "#d73027",
-                          name = "µg/m³") +
+                          name = unit) +
       coord_flip() +
       scale_y_continuous(labels = comma) +
       labs(title = paste0(POLLUTANT_LABELS[poll], " by station (", input$rank_year, ")"),
@@ -260,12 +264,14 @@ server <- function(input, output, session) {
       summarise(avg = mean(.data[[poll]], na.rm = TRUE), .groups = "drop") %>%
       filter(!is.na(avg), !is.na(name))
     
+    unit <- ifelse(poll == "CO", "mg/m³", "µg/m³")
+    
     p <- ggplot(d, aes(x = year, y = name, fill = avg,
                        text = paste0(name, "<br>Year: ", year,
-                                     "<br>Avg: ", round(avg, 1), " µg/m³"))) +
+                                     "<br>Avg: ", round(avg, 1), " ", unit))) +
       geom_tile(colour = "white", linewidth = 0.3) +
       scale_fill_gradient(low = "#ffffcc", high = "#800026",
-                          name = "µg/m³", na.value = "grey90") +
+                          name = unit, na.value = "grey90") +
       scale_x_continuous(breaks = 2001:2018) +
       labs(title = paste(POLLUTANT_LABELS[poll], "— station × year"),
            x = "Year", y = NULL) +
@@ -293,9 +299,10 @@ server <- function(input, output, session) {
         pct_change = (avg - baseline) / baseline * 100
       ) %>%
       ungroup() %>%
-      mutate(label = recode(pollutant,
-                            "NO_2" = "NO₂", "PM10" = "PM10",
-                            "O_3"  = "O₃",  "SO_2" = "SO₂", "CO" = "CO"
+      mutate(label = case_match(pollutant,
+                                "NO_2" ~ "NO₂", "PM10" ~ "PM10",
+                                "O_3"  ~ "O₃",  "SO_2" ~ "SO₂", "CO" ~ "CO",
+                                .default = pollutant
       ))
     
     p <- ggplot(d, aes(x = year, y = pct_change,
