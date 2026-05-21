@@ -2,7 +2,7 @@
 
 This project analyses air pollution trends in Madrid between 2001 and 2018 using data visualisation techniques in R.
 
-The project was developed for the course Visualisation in Data Science (VDS2526) and focuses on exploring temporal and spatial patterns of air pollution across monitoring stations in Madrid.
+The project was developed for the course Visualisation in Data Science and focuses on exploring temporal and spatial patterns of air pollution across monitoring stations in Madrid.
 
 ## Main Objectives
 
@@ -27,7 +27,7 @@ The project was implemented using:
 - Exploratory data analysis
 - Visualisation design and implementation
 - Interactive Shiny dashboard
-- Final project report
+
 
 ## Dataset
 
