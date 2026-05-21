@@ -21,6 +21,11 @@ The project was implemented using:
 - plotly
 - shiny
 
+## Project Structure
+* `mardrid2001.csv`to`mardrid2018.csv` datasets
+*  `stations.csv`
+*  Interactive_Dashboard.R
+
 ## Repository Contents
 
 - Data cleaning and preprocessing scripts
